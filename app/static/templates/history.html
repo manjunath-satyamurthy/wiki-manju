@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <title>history</title>
+</head>
+<body>
+<div class="body">
+    <div class="block">
+        {% for i in history %}
+        {% if not sub %}
+        {{ i.created }}  |  {{ i.content }} | <a href="/?v={{len - history.index(i)}}" >view</a>  | <a href="/_edit?v={{len - history.index(i)}}" >edit</a>
+        <br>
+        {% else %}
+        {{ i.created }}  |  {{ i.content }} | <a href="/{{sub}}?v={{len - history.index(i)}}" >view</a>  | <a href="/_edit/{{sub}}?v={{len - history.index(i)}}" >edit</a>
+        <br>
+        {% endif %}
+        {% endfor %}
+
+    </div>
+</div>
+</body>
+</html>

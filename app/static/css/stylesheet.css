@@ -1,0 +1,55 @@
+.heading{
+    position: fixed;
+    border: 2px solid black;
+    height: 100px;
+    width: 100%;
+    margin-left: -10px;
+    margin-top: -10px;
+    background-color: #242020;
+    border-radius:10px;
+    display:inline-block;
+}
+
+.credentials{
+
+margin-top:-10px;
+float:right
+display: inline;
+color: #FA5757;
+}
+
+h1{
+    postion: relative;
+    text-align:center;
+    color:#FA5757;
+    marginmanju -top: -15px;
+
+}
+
+.posts{
+    position: absolute;
+    clear:both;
+    border: 1px solid indigo;
+    width: 75%;
+    margin-left: 60px;
+    margin-top: 110px;
+    padding: 10px 10px 10px 10px;
+    background-color:#58FAF4;
+    border-radius: 5px;
+    display: block;
+}
+
+.pages{
+    position: relative;
+    float: right;
+    clear: both;
+    border: 1px solid indigo;
+    width: 10%;
+    margin-right: 60px;
+    margin-top: 110px;
+    border-radius: 10px;
+    background-color: #58FAF4;
+    padding: 4px 4px 4px 4px;
+}
+
+

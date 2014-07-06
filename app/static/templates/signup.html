@@ -1,0 +1,130 @@
+<html>
+<head>
+
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+
+
+
+</head>
+<body id = 'body'>
+<script type="text/javascript">
+function validateform(){
+console.log('hello')
+var a = document.getElementById('username').value;
+console.log(a);
+var b = document.getElementById('password').value;
+console.log(b);
+var c = document.getElementById('verify').value;
+console.log(c);
+var d = document.getElementById('email').value;
+var pat = /^[a-zA-Z0-9_-]{3,20}$/;
+var pwdpat = /^.{3,20}$/
+var mailpat = /^[\S]+@[\S]+\.[\S]+$/
+var flag = 0;
+if (!pat.test(a)){
+flag =1;
+console.log('got in yea')
+var node = document.getElementById('error');
+node.innerHTML = 'username invalid';
+}
+else{
+var node = document.getElementById('error');
+node.innerHTML = '';
+}
+
+if (!pwdpat.test(b)){
+flag =1;
+var node = document.getElementById('error1');
+node.innerHTML = '<span style = "color: red">invalid password</span>';
+}
+
+else{
+var node = document.getElementById('error1');
+node.innerHTML = '';
+}
+if(b !== c){
+flag =1
+var node = document.getElementById('error2');
+node.innerHTML = '<span style = "color: red">passwords dont match</span>';
+}
+else{
+var node = document.getElementById('error2');
+node.innerHTML = '';
+}
+
+if(d && !mailpat.test(d)){
+flag =1;
+var node = document.getElementById('error3');
+node.innerHTML = 'not a valid email';
+}
+else{
+var node = document.getElementById('error3');
+node.innerHTML = '';
+}
+
+if (flag === 0){
+document.forms.signup.submit();
+}
+}
+
+</script>
+
+<form id='signup' method= 'post'>
+Sign Up !<br><br>
+
+<label id = 'uname'>
+    username
+
+    <input id = 'username' type="text" autocomplete="off" name = "username" value={{username}}><span style = 'color:red;' id="error"></span>
+</label>
+
+<br>
+
+<label id = 'pwd'>
+   password
+
+    <input id = 'password' type="password" autocomplete="off" name = "password" value = {{password}}><span style = 'color:red;' id="error1"></span>
+</label>
+
+<br>
+
+<label id = 'ver'>
+verify
+
+    <input id = 'verify' type="password" autocomplete="off" name="verify" value={{verify}}><span style = 'color:red;' id="error2"></span>
+</label>
+
+<br>
+
+<label id = 'mail'>
+    email(optional)
+
+    <input id = 'email' type="text" autocomplete="off" name="email" value={{email}}><span style = 'color:red;' id="error3"></span>
+</label>
+
+<br>
+
+<input type="button" value="signup" onclick="validateform();">
+</form>
+</body>
+</html>
+
+
+
+          <div class="row">
+    <div class="large-12 columns">
+      <div class="nav-bar right">
+       <ul class="button-group">
+         <li><a href="#" class="button">Link 1</a></li>
+
+        </ul>
+      </div>
+      <h1>Welcome to Wiki<small>frontpage</small></h1>
+      <hr/>
+    </div>
+  </div>
+
+
+
+

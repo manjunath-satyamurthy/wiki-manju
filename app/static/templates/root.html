@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../static/vendor/modernizr.js"></script>
+<link rel="stylesheet" href="../static/css/foundation.css">
+
+    <title>welcome to wiki</title>
+
+</head>
+<body>
+
+
+<nav class="top-bar" data-topbar="">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/">Home</a></h1>
+    </li>
+
+        <li class="toggle-topbar menu-icon"><a><span>Menu</span></a></li>
+
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+
+      {% if not username %}
+      <li class="divider"></li>
+      <li class="passive"><a href="/login" data-reveal-id="myModal">login</a>
+      <div id="myModal" class="reveal-modal tiny" data-reveal>
+        <form id="idForm" method="post">
+            <div class="name-field">
+                <label>Username<small>required</small> <input type="text" name="username" required pattern="[a-zA-Z0-9]+"> </label>
+                <small id = "error1" class="error" style="display: none">Name is required and must be a string without spaces.</small>
+            </div>
+            <div class="password-field">
+                <label>password<small>required</small> <input type="password" name="password" required pattern="[a-zA-Z0-9]..+"> </label>
+                <small id = "error2" class="error" style="display: none">Password is required, must be atleast 3 characters.</small>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+      </div></li>
+      <li class="divider"></li>
+      <li class="passive"><a href="" data-reveal-id="SignupModal">signup</a>
+      <div id="SignupModal" class="reveal-modal tiny" data-reveal>
+        <form id="signUp" method="post">
+            <div class="name-field">
+                <label>Your name <small>required</small>
+                <input type="text" name="uname" required pattern="[a-zA-Z0-9]+">
+                </label>
+                <small id = "error1" class="error" style="display: none">Name is required and must be a string without spaces.</small>
+            </div>
+
+            <div class="password">
+                <label>Password <small>required</small>
+                <input type="password" name="pword" required pattern="[a-zA-Z0-9]..+">
+                </label>
+                <small id = "error2" class="error" style="display: none">password should be more than 3 characters</small>
+            </div>
+
+            <div class="password">
+                <label>Repeat Password <small>required</small>
+                <input type="password" name="repeat" required pattern="[a-zA-Z0-9]..+">
+                </label>
+                <small id = "error3" class="error" style="display: none">password must be the same and more than three characters</small>
+            </div>
+
+            <div class="email-field">
+                <label>Email <small>required</small>
+                <input type="email" name="email" required pattern="^[\S]+@[\S]+\.[\S]+$">
+                </label>
+                <small id = "error4" class="error" style="display: none">A valid email address is required.</small>
+            </div>
+
+        <button type="submit">Submit</button>
+</form>
+
+      </div></li>
+      <li class="divider"></li>
+      {% else %}
+      <li class="divider"></li>
+      <li class="passive"><a href="/_edit/">edit page</a></li>
+      <li class="divider"></li>
+      <li class="passive"><a href="/_history/">history</a></li>
+      <li class="divider"></li>
+      <li class="has-dropdown">
+        <a>hello {{username}}</a>
+        <ul class="dropdown">
+          <li class="divider"></li>
+          <li><a href="/logout">logout</a></li>
+          <li class="divider"></li>
+        </ul>
+      </li>
+      {% endif %}
+    </ul>
+
+  </section>
+</nav>
+
+<div class="row">
+    <div class="large-12 columns">
+
+      <h1>Wiki<small>      python powered</small></h1>
+      <hr/>
+    </div>
+  </div>
+
+
+
+
+
+
+  <div class="row">
+
+
+    <div class="large-9 columns" role="content">
+
+
+      <article>
+
+        <div class="panel">
+        <div class="row">
+          <div class="large-12 columns">
+              <p>
+                        {{ content | safe}}
+            </p>
+          </div>
+
+        </div>
+
+        </div>
+      </article>
+
+
+      <hr/>
+
+
+    </div>
+
+     <aside class="large-3 columns">
+<div class="panel callout radius">
+
+      <h6>Pages</h6>
+
+      <ul class="side-nav">
+          {% for i in page %}
+        <li><a href="/{{i.subject}}">{{i.subject}}</a></li>
+          {% endfor %}
+      </ul>
+</div>
+    </aside>
+
+
+
+  </div>
+<script src="../static/vendor/jquery.js"></script>
+<script src="../static/vendor/fastclick.js"></script>
+<script src="../static/foundation/foundation.min.js"></script>
+<script> $(document).foundation();</script>
+<script type="text/javascript">
+    $("#idForm").submit(function(ev) {
+    var url = "/login"
+    var formData = {
+			'username' 				: $('input[name=username]').val(),
+			'password' 			: $('input[name=password]').val(),
+		};
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: JSON.stringify(formData),
+           success: function(data)
+           {
+             console.log(data)
+             if (data){
+                window.location.reload();
+             }
+             else {
+                alert('invalid credentials')
+             }
+           }
+         });
+         ev.preventDefault();
+});
+</script>
+<script type="text/javascript">
+
+    $("#signUp").submit(function(ev) {
+    var url = "/signup"
+    var username = $('input[name=uname]').val()
+    var password = $('input[name=pword]').val()
+    var repeat = $('input[name=repeat]').val()
+    var email = $('input[name=email]').val()
+    var pat1 = /[a-zA-Z0-9]+/
+    var pat2 = /[a-zA-Z0-9]..+/
+    var pat3 = /^[\S]+@[\S]+\.[\S]+$/
+
+
+    if (!pat1.test(username)){
+        document.getElementById('error1').style.display=block;
+    }
+    var formData = {
+			'username' 			: username,
+			'password' 			: password,
+			'repeat'            : repeat,
+			'email'             : email,
+		};
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: JSON.stringify(formData),
+           success: function(data)
+           {
+             console.log(data)
+             if (data){
+                window.location.reload();
+             }
+             else {
+                alert('invalid credentials')
+             }
+           }
+         });
+         ev.preventDefault();
+});
+
+</script>
+</body>
+</html>

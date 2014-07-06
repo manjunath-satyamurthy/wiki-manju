@@ -1,0 +1,22 @@
+application: wiki-manju
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+libraries:
+- name: jinja2
+  version: latest
+
+handlers:
+- url: /static/css
+  static_dir: static/css
+
+- url: /static/foundation
+  static_dir: static/foundation
+
+- url: /static/vendor
+  static_dir: static/vendor
+
+- url: /.*
+  script: wiki.application

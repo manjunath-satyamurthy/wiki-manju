@@ -1,0 +1,27 @@
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+</head>
+<body>
+<form method="post">
+log in !<br><br>
+
+<label>
+    username
+</label>
+    <input type="text" autocomplete="off" name = "username" value={{username}}>
+    <font color="red">{{error_u}}</font>
+
+<br>
+
+<label>
+   password
+</label>
+    <input type="password" autocomplete="off" name = "password" value = {{password}}>
+    <font color="red">{{error_p}}</font>
+
+<br>
+<input type="submit" value="login">
+</form>
+</body>
+</html>
