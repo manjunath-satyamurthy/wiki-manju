@@ -6,12 +6,18 @@ import hashlib
 import jinja2
 import json
 from google.appengine.ext import db
-from google.appengine.api import memcache
+from google.appengine.api import memcache, users
 from google.appengine.api import mail
+import xsrfutil
+from xsrfutil import *
 
+jinja_env = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(
+        os.path.join(os.path.dirname(__file__), 'static/templates')
+    ), autoescape=True
+)
 
-
-jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'static/templates')), autoescape=True)
+jinja_env.globals['xsrf_token'] = xsrfutil.xsrf_token
 
 
 def hash_str(s):
@@ -89,7 +95,6 @@ def get_front():
     con = memcache.get(key)
     if con:
         for i in con:
-            i.content = i.content.replace('\n', '<br>')
             posts.append(i)
         print "from memcache"
         return posts
@@ -163,8 +168,6 @@ class Signup(Handler):
         pswd = params.get('password')
         vpswd = params.get('repeat')
         mail = params.get('email')
-        print '.....................................................................................................'
-        print uname, pswd, vpswd, mail
 
         name = valid_username(uname)
         pwd = valid_password(pswd)
@@ -178,8 +181,6 @@ class Signup(Handler):
         if (name == "invalid username" or pwd == "invalid password" or name == "user already exists" or
                     match == "passwords did not match" or mil == "invalid email"):
             return None
-            # self.render('signup.html', username=uname, error=name, password=pswd, erro=pwd, verify=vpswd,
-            #             err=match, email=mail, er=mil)
         else:
             u = Users(name=uname, password=pswd, email=mail)
             u.put()
@@ -197,7 +198,6 @@ class Login(Handler):
     def post(self):
         params = json.loads(self.request.body)
         username = params.get('username')
-        print username
         password = params.get('password')
         log_check = Users.all().filter('name =', username)
         if log_check.count() > 0:
@@ -211,11 +211,6 @@ class Login(Handler):
                                 password='', error_u="", error_p="wrong password")
         else:
             return None
-            # self.response.status = 401
-            # self.response.headers['Content-Type'] = 'application/json'
-            # rv = json.dumps({'response': 401})
-            # self.response.write(rv)
-            #self.render('login.html', username="", password="", error_u="invalid username", error_p="")
 
 
 class Logout(Handler):
@@ -233,14 +228,9 @@ class Mainpage(Handler):
         posts = get_front()
         pag = get_page()
         username = self.request.cookies.get("username")
-        u_name = check_secure_val(username)
 
-        if q:
-            self.render('root.html', username=u_name, content=posts[int(q)].content, page=pag)
-
-
-        elif username:
-
+        if username:
+            u_name = check_secure_val(username)
             print u_name
             if u_name:
                 if posts:
@@ -265,15 +255,17 @@ class EditPage(Handler):
     def get(self, sub):
         q = self.request.get('v')
         username = self.request.cookies.get("username")
+        current_user = check_secure_val(username)
         if username and check_secure_val(username):
             print sub
 
             if q and not sub:
+                print type(q)
                 history = get_front()
                 l = len(history)
                 cont = history[l-int(q)].content
                 print cont
-                self.render('edit.html', content=cont)
+                self.render('edit.html', content=cont, username=current_user)
 
             elif q and sub:
                 print sub
@@ -286,10 +278,10 @@ class EditPage(Handler):
                 print l
                 cont = pags[l-int(q)].content
                 print cont
-                self.render('edit.html', content=cont, len=l)
+                self.render('edit.html', content=cont, len=l, username=current_user)
 
             else:
-                self.render('edit.html')
+                self.render('edit.html', username=current_user)
 
         else:
             self.redirect('/')
@@ -353,8 +345,6 @@ class History(Handler):
         if not sub:
             history = get_front()
             l = len(history)
-            print 'bullllllllllllllllllllll'
-            print l
             self.render('history.html', history=history, len=l)
 
         else:
@@ -383,8 +373,27 @@ class mailHandler(Handler):
         message.send()
 
 
+class Settings(Handler):
+
+    def get(self):
+        username = self.request.cookies.get("username")
+        user = check_secure_val(username)
+        self.render('settings.html', username=user)
+
+    @xsrfutil.xsrf_protect
+    def post(self):
+        new_password = self.request.get('new_password')
+        username = self.request.cookies.get("username")
+        user = check_secure_val(username)
+        user_obj = Users.all().filter('name =', user).get()
+        user_obj.password = new_password
+        user_obj.put()
+        self.redirect('/')
+
+
 PAGE_RE = r'((?:[a-zA-Z0-9_-]+/?)*)'
-application = webapp2.WSGIApplication([('/signup', Signup),('/login', Login), ('/mail', mailHandler),
-                                       ('/logout', Logout), ('/', Mainpage),
-                                       ('/_edit/?'+PAGE_RE, EditPage),
-                                       ('/_history/?'+PAGE_RE , History), ('/'+PAGE_RE, NewPost)],debug=True)
+application = webapp2.WSGIApplication(
+    [('/signup', Signup),('/login', Login), ('/mail', mailHandler),\
+    ('/logout', Logout), ('/', Mainpage),('/settings', Settings), \
+    ('/_edit/?'+PAGE_RE, EditPage), ('/_history/?'+PAGE_RE , History), \
+    ('/'+PAGE_RE, NewPost)],debug=True)

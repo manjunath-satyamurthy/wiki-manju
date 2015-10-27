@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <title>edit wiki</title>
-</head>
-<body>
-<form method="post">
-<textarea name="content">{{content}} </textarea>
-<br>
-<input type="submit" name="save" value="save">
-</form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+
+  <form method="post">
+    <div class="form-group">
+      <label>Edit Frontpage</label>
+      <textarea name="content" class="form-control" rows="10" id="comment"></textarea>
+    </div>
+    <button type="submit" name="save" value='save' class="btn btn-default">Submit</button>
+  </form>
+
+{% endblock %}
